@@ -4,29 +4,28 @@
         org $00
 byt2    .ds 1
 
-        org $600
+        org $3000
+banks
+        :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
 bank
         lda banks
         sta portb
         inc bank+1
         rts
 
-        ;ini bank
-        org $4000
-ini
-        icl "t.rp.ini"
-        rts
-        org $4080
-rp
-        icl "t.rp"
-        rts
-        org $6010
-scr
-        ins "t.mic"
-        org $7c00
-pmg
-        icl "t.pmg"
+rp = $4000
+scr = $6010
+pmg = $7b00
 
+        ini bank
+
+        org rp
+        icl "simpsons0000.rp.asq"
+        rts
+        org scr
+        ins "frames\simpsons0000.out.png.mic"
+        org pmg
+        icl "frames\simpsons0000.out.png.pmg"
 
 ;.local
 ;        ;ini bank
@@ -87,11 +86,10 @@ LOOP    lda vcount              ;synchronization for the first screen line
         mva <ant dlptr
         mva >ant dlptr+1
 
-        jsr ini
-
 ; sync
-        :12 pha:pla
-        :2 nop
+        :3 sta wsync
+        :3 pha:pla
+        :3 nop
 
         jsr rp
 
@@ -145,9 +143,6 @@ stop    mva #$00 pmcntl         ;PMG disabled
         cli                     ;IRQ enabled
 
         rts                     ;return to ... DOS
-
-banks
-        :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
 
 ; macro
 

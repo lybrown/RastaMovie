@@ -1,9 +1,6 @@
 ; rasta movie 
         icl "no_name.h"
 
-        org $00
-byt2    .ds 1
-
         org $3000
 banks
         :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
@@ -13,81 +10,78 @@ bank
         inc bank+1
         rts
 
+frame_repeat = 2
+frame_count = 64
+
 rp = $4000
 scr = $6010
 missiles = $7b00
 players = $7c00
 
-        icl "simpsons0000.frame.asq"
-        icl "simpsons0001.frame.asq"
-        icl "simpsons0002.frame.asq"
-        icl "simpsons0003.frame.asq"
-        icl "simpsons0004.frame.asq"
-        icl "simpsons0005.frame.asq"
-        icl "simpsons0006.frame.asq"
-        icl "simpsons0007.frame.asq"
-        icl "simpsons0008.frame.asq"
-        icl "simpsons0009.frame.asq"
-;       icl "simpsons0010.frame.asq"
-;       icl "simpsons0011.frame.asq"
-;       icl "simpsons0012.frame.asq"
-;       icl "simpsons0013.frame.asq"
-;       icl "simpsons0014.frame.asq"
-;       icl "simpsons0015.frame.asq"
-;       icl "simpsons0016.frame.asq"
-;       icl "simpsons0017.frame.asq"
-;       icl "simpsons0018.frame.asq"
-;       icl "simpsons0019.frame.asq"
-;       icl "simpsons0020.frame.asq"
-;       icl "simpsons0021.frame.asq"
-;       icl "simpsons0022.frame.asq"
-;       icl "simpsons0023.frame.asq"
-;       icl "simpsons0024.frame.asq"
-;       icl "simpsons0025.frame.asq"
-;       icl "simpsons0026.frame.asq"
-;       icl "simpsons0027.frame.asq"
-;       icl "simpsons0028.frame.asq"
-;       icl "simpsons0029.frame.asq"
-;       icl "simpsons0030.frame.asq"
-;       icl "simpsons0031.frame.asq"
-;       icl "simpsons0032.frame.asq"
-;       icl "simpsons0033.frame.asq"
-;       icl "simpsons0034.frame.asq"
-;       icl "simpsons0035.frame.asq"
-;       icl "simpsons0036.frame.asq"
-;       icl "simpsons0037.frame.asq"
-;       icl "simpsons0038.frame.asq"
-;       icl "simpsons0039.frame.asq"
-;       icl "simpsons0040.frame.asq"
-;       icl "simpsons0041.frame.asq"
-;       icl "simpsons0042.frame.asq"
-;       icl "simpsons0043.frame.asq"
-;       icl "simpsons0044.frame.asq"
-;       icl "simpsons0045.frame.asq"
-;       icl "simpsons0046.frame.asq"
-;       icl "simpsons0047.frame.asq"
-;       icl "simpsons0048.frame.asq"
-;       icl "simpsons0049.frame.asq"
-;       icl "simpsons0050.frame.asq"
-;       icl "simpsons0051.frame.asq"
-;       icl "simpsons0052.frame.asq"
-;       icl "simpsons0053.frame.asq"
-;       icl "simpsons0054.frame.asq"
-;       icl "simpsons0055.frame.asq"
-;       icl "simpsons0056.frame.asq"
-;       icl "simpsons0057.frame.asq"
-;       icl "simpsons0058.frame.asq"
-;       icl "simpsons0059.frame.asq"
-;       icl "simpsons0060.frame.asq"
-;       icl "simpsons0061.frame.asq"
-;       icl "simpsons0062.frame.asq"
-;       icl "simpsons0063.frame.asq"
-;       icl "simpsons0064.frame.asq"
-;       icl "simpsons0065.frame.asq"
-;       icl "simpsons0066.frame.asq"
-;       icl "simpsons0067.frame.asq"
-;       icl "simpsons0068.frame.asq"
-;       icl "simpsons0069.frame.asq"
+        icl "simpsons0000.out.frame.asq"
+        icl "simpsons0001.out.frame.asq"
+        icl "simpsons0002.out.frame.asq"
+        icl "simpsons0003.out.frame.asq"
+        icl "simpsons0004.out.frame.asq"
+        icl "simpsons0005.out.frame.asq"
+        icl "simpsons0006.out.frame.asq"
+        icl "simpsons0007.out.frame.asq"
+        icl "simpsons0008.out.frame.asq"
+        icl "simpsons0009.out.frame.asq"
+        icl "simpsons0010.out.frame.asq"
+        icl "simpsons0011.out.frame.asq"
+        icl "simpsons0012.out.frame.asq"
+        icl "simpsons0013.out.frame.asq"
+        icl "simpsons0014.out.frame.asq"
+        icl "simpsons0015.out.frame.asq"
+        icl "simpsons0016.out.frame.asq"
+        icl "simpsons0017.out.frame.asq"
+        icl "simpsons0018.out.frame.asq"
+        icl "simpsons0019.out.frame.asq"
+        icl "simpsons0020.out.frame.asq"
+        icl "simpsons0021.out.frame.asq"
+        icl "simpsons0022.out.frame.asq"
+        icl "simpsons0023.out.frame.asq"
+        icl "simpsons0024.out.frame.asq"
+        icl "simpsons0025.out.frame.asq"
+        icl "simpsons0026.out.frame.asq"
+        icl "simpsons0027.out.frame.asq"
+        icl "simpsons0028.out.frame.asq"
+        icl "simpsons0029.out.frame.asq"
+        icl "simpsons0030.out.frame.asq"
+        icl "simpsons0031.out.frame.asq"
+        icl "simpsons0032.out.frame.asq"
+        icl "simpsons0033.out.frame.asq"
+        icl "simpsons0034.out.frame.asq"
+        icl "simpsons0035.out.frame.asq"
+        icl "simpsons0036.out.frame.asq"
+        icl "simpsons0037.out.frame.asq"
+        icl "simpsons0038.out.frame.asq"
+        icl "simpsons0039.out.frame.asq"
+        icl "simpsons0040.out.frame.asq"
+        icl "simpsons0041.out.frame.asq"
+        icl "simpsons0042.out.frame.asq"
+        icl "simpsons0043.out.frame.asq"
+        icl "simpsons0044.out.frame.asq"
+        icl "simpsons0045.out.frame.asq"
+        icl "simpsons0046.out.frame.asq"
+        icl "simpsons0047.out.frame.asq"
+        icl "simpsons0048.out.frame.asq"
+        icl "simpsons0049.out.frame.asq"
+        icl "simpsons0050.out.frame.asq"
+        icl "simpsons0051.out.frame.asq"
+        icl "simpsons0052.out.frame.asq"
+        icl "simpsons0053.out.frame.asq"
+        icl "simpsons0054.out.frame.asq"
+        icl "simpsons0055.out.frame.asq"
+        icl "simpsons0056.out.frame.asq"
+        icl "simpsons0057.out.frame.asq"
+        icl "simpsons0058.out.frame.asq"
+        icl "simpsons0059.out.frame.asq"
+        icl "simpsons0060.out.frame.asq"
+        icl "simpsons0061.out.frame.asq"
+        icl "simpsons0062.out.frame.asq"
+        icl "simpsons0063.out.frame.asq"
 
         org $2000
 ant     ANTIC_PROGRAM scr,ant
@@ -144,7 +138,7 @@ s0      lda #$03
 repeat
         lda #0
         inc repeat+1
-        cmp #4
+        cmp #frame_repeat
         bne input
         mva #0 repeat+1
 next
@@ -152,7 +146,7 @@ next
         sta portb
         inc next+1
         lda next+1
-        cmp #8
+        cmp #frame_count
         bne input
         mva <banks next+1 
 
@@ -184,6 +178,9 @@ stop    mva #$00 pmcntl         ;PMG disabled
         cli                     ;IRQ enabled
 
         rts                     ;return to ... DOS
+
+        org $00
+byt2    .ds 1
 
 ; macro
 
