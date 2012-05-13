@@ -1,0 +1,225 @@
+; rasta movie 
+        icl "no_name.h"
+
+        org $00
+byt2    .ds 1
+
+        org $3000
+banks
+        :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
+bank
+        lda banks
+        sta portb
+        inc bank+1
+        rts
+
+rp = $4000
+scr = $6010
+missiles = $7b00
+players = $7c00
+
+        icl "simpsons0000.frame.asq"
+        icl "simpsons0001.frame.asq"
+        icl "simpsons0002.frame.asq"
+        icl "simpsons0003.frame.asq"
+        icl "simpsons0004.frame.asq"
+        icl "simpsons0005.frame.asq"
+        icl "simpsons0006.frame.asq"
+        icl "simpsons0007.frame.asq"
+        icl "simpsons0008.frame.asq"
+        icl "simpsons0009.frame.asq"
+;       icl "simpsons0010.frame.asq"
+;       icl "simpsons0011.frame.asq"
+;       icl "simpsons0012.frame.asq"
+;       icl "simpsons0013.frame.asq"
+;       icl "simpsons0014.frame.asq"
+;       icl "simpsons0015.frame.asq"
+;       icl "simpsons0016.frame.asq"
+;       icl "simpsons0017.frame.asq"
+;       icl "simpsons0018.frame.asq"
+;       icl "simpsons0019.frame.asq"
+;       icl "simpsons0020.frame.asq"
+;       icl "simpsons0021.frame.asq"
+;       icl "simpsons0022.frame.asq"
+;       icl "simpsons0023.frame.asq"
+;       icl "simpsons0024.frame.asq"
+;       icl "simpsons0025.frame.asq"
+;       icl "simpsons0026.frame.asq"
+;       icl "simpsons0027.frame.asq"
+;       icl "simpsons0028.frame.asq"
+;       icl "simpsons0029.frame.asq"
+;       icl "simpsons0030.frame.asq"
+;       icl "simpsons0031.frame.asq"
+;       icl "simpsons0032.frame.asq"
+;       icl "simpsons0033.frame.asq"
+;       icl "simpsons0034.frame.asq"
+;       icl "simpsons0035.frame.asq"
+;       icl "simpsons0036.frame.asq"
+;       icl "simpsons0037.frame.asq"
+;       icl "simpsons0038.frame.asq"
+;       icl "simpsons0039.frame.asq"
+;       icl "simpsons0040.frame.asq"
+;       icl "simpsons0041.frame.asq"
+;       icl "simpsons0042.frame.asq"
+;       icl "simpsons0043.frame.asq"
+;       icl "simpsons0044.frame.asq"
+;       icl "simpsons0045.frame.asq"
+;       icl "simpsons0046.frame.asq"
+;       icl "simpsons0047.frame.asq"
+;       icl "simpsons0048.frame.asq"
+;       icl "simpsons0049.frame.asq"
+;       icl "simpsons0050.frame.asq"
+;       icl "simpsons0051.frame.asq"
+;       icl "simpsons0052.frame.asq"
+;       icl "simpsons0053.frame.asq"
+;       icl "simpsons0054.frame.asq"
+;       icl "simpsons0055.frame.asq"
+;       icl "simpsons0056.frame.asq"
+;       icl "simpsons0057.frame.asq"
+;       icl "simpsons0058.frame.asq"
+;       icl "simpsons0059.frame.asq"
+;       icl "simpsons0060.frame.asq"
+;       icl "simpsons0061.frame.asq"
+;       icl "simpsons0062.frame.asq"
+;       icl "simpsons0063.frame.asq"
+;       icl "simpsons0064.frame.asq"
+;       icl "simpsons0065.frame.asq"
+;       icl "simpsons0066.frame.asq"
+;       icl "simpsons0067.frame.asq"
+;       icl "simpsons0068.frame.asq"
+;       icl "simpsons0069.frame.asq"
+
+        org $2000
+ant     ANTIC_PROGRAM scr,ant
+
+main
+        mva #$78 pmbase         ;missiles and players data address
+        mva #$03 pmcntl         ;enable players and missiles
+
+        lda:cmp:req $14         ;wait 1 frame
+
+        sei                     ;stop interrups
+        mva #$00 nmien          ;stop all interrupts
+        jmp c0
+
+LOOP    lda vcount              ;synchronization for the first screen line
+        cmp #$02
+        bne LOOP
+
+        mva #%00111110 dmactl   ;set new screen width
+        mva <ant dlptr
+        mva >ant dlptr+1
+
+; sync
+        :3 sta wsync
+        :3 pha:pla
+        :3 nop
+
+        jsr rp
+
+        lda #124
+        cmp:rne VCOUNT
+
+c0      lda #$00
+        sta colbak
+c1      lda #$00
+        sta color0
+c2      lda #$00
+        sta color1
+c3      lda #$00
+        sta color2
+c4      lda #$00
+        sta color3
+s0      lda #$03
+        sta sizep0
+        sta sizep1
+        sta sizep2
+        sta sizep3
+        sta sizem
+        lda #$D0
+        sta hposm0
+        lda #$04
+        sta gtictl
+
+repeat
+        lda #0
+        inc repeat+1
+        cmp #4
+        bne input
+        mva #0 repeat+1
+next
+        lda banks
+        sta portb
+        inc next+1
+        lda next+1
+        cmp #8
+        bne input
+        mva <banks next+1 
+
+input
+; exit
+
+        lda trig0               ; FIRE #0
+        beq stop
+
+        lda trig1               ; FIRE #1
+        beq stop
+
+        lda consol              ; START
+        and #1
+        beq stop
+
+        lda skctl               ; ANY KEY
+        and #$04
+        beq stop
+
+        jmp LOOP
+
+stop    mva #$00 pmcntl         ;PMG disabled
+        tax
+        sta:rne hposp0,x+
+
+        mva #$ff portb          ;ROM switch on
+        mva #$40 nmien          ;only NMI interrupts, DLI disabled
+        cli                     ;IRQ enabled
+
+        rts                     ;return to ... DOS
+
+; macro
+
+.MACRO  ANTIC_PROGRAM
+        :+8 dta $4e,a(:1+$0000+#*40)
+        :+8 dta $4e,a(:1+$0140+#*40)
+        :+8 dta $4e,a(:1+$0280+#*40)
+        :+8 dta $4e,a(:1+$03C0+#*40)
+        :+8 dta $4e,a(:1+$0500+#*40)
+        :+8 dta $4e,a(:1+$0640+#*40)
+        :+8 dta $4e,a(:1+$0780+#*40)
+        :+8 dta $4e,a(:1+$08C0+#*40)
+        :+8 dta $4e,a(:1+$0A00+#*40)
+        :+8 dta $4e,a(:1+$0B40+#*40)
+        :+8 dta $4e,a(:1+$0C80+#*40)
+        :+8 dta $4e,a(:1+$0DC0+#*40)
+        :+8 dta $4e,a(:1+$0F00+#*40)
+        :+8 dta $4e,a(:1+$1040+#*40)
+        :+8 dta $4e,a(:1+$1180+#*40)
+        :+8 dta $4e,a(:1+$12C0+#*40)
+        :+8 dta $4e,a(:1+$1400+#*40)
+        :+8 dta $4e,a(:1+$1540+#*40)
+        :+8 dta $4e,a(:1+$1680+#*40)
+        :+8 dta $4e,a(:1+$17C0+#*40)
+        :+8 dta $4e,a(:1+$1900+#*40)
+        :+8 dta $4e,a(:1+$1A40+#*40)
+        :+8 dta $4e,a(:1+$1B80+#*40)
+        :+8 dta $4e,a(:1+$1CC0+#*40)
+        :+8 dta $4e,a(:1+$1E00+#*40)
+        :+4 dta $4e,a(:1+$1F40+#*40)
+        :+4 dta $4e,a(:1+$1FF0+#*40)
+        :+8 dta $4e,a(:1+$2090+#*40)
+        :+8 dta $4e,a(:1+$21D0+#*40)
+        :+8 dta $4e,a(:1+$2310+#*40)
+        :+8 dta $4e,a(:1+$2450+#*40)
+        dta $41,a(:2)
+.ENDM
+
+        run main

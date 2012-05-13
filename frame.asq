@@ -1,0 +1,10 @@
+.local
+        ini bank
+        org rp
+        icl "FRAME.rp.asq"
+        rts
+        org scr
+        ins "FRAME.out.png.mic",0,players-scr
+        org missiles
+        icl "FRAME.out.png.pmg"
+.endl
