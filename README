@@ -114,6 +114,8 @@ Only 64 frames are used for the movie.
 
 This can take several hours depending on max_evals.
 
+Set max_evals to 1 for quick dryrun.
+
 Run in Altirra
 --------------
 
