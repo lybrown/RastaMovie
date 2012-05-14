@@ -23,9 +23,17 @@ VirtualDub
 
 http://www.virtualdub.org
 
-Cygwin (Get patch, make, perl, zip, unzip, rxvt)
+Cygwin (Get patch, make, perl, zip, unzip, rxvt, 7z)
 
 http://www.cygwin.com
+
+Altirra
+
+http://www.virtualdub.org/altirra.html
+
+Mads
+
+http://mads.atari8.info
 
 Unzip
 -----
@@ -38,13 +46,23 @@ Unzip
 
   unzip Rasta-opthack5.zip
 
+  7z x mads_1.9.4.7z mads.exe
+
+  chmod +x mads.exe
+
   cd src
 
   patch -i ../Rasta-opthack5.patch
 
+  unzip allegro-msvc10-4.2.3.zip
+
+  mv allegro-msvc10-4.2.3/* .
+
   unzip FreeImage3153Win32.zip
 
-  unzip allegro-msvc10-4.2.3.zip
+  cp FreeImage/Dist/FreeImage.dll bin
+  cp FreeImage/Dist/FreeImage.lib lib
+  cp FreeImage/Dist/FreeImage.h include
 
 Build
 -----
@@ -55,9 +73,13 @@ Build
 
   Build by pressing F7.
 
-  cp Release/RastaConverter.exe ..
+  cp Release/RastaConverter.exe ..      (Overwrite)
+
+  cp bin/*.dll ..
 
   cd ..
+
+  chmod +x *.exe *.dll
 
 Extract Movie Frames
 --------------------
@@ -91,10 +113,8 @@ Run in Altirra
 
   Select 1088K Memory Size.
 
-
 Contact
 -------
 
-
-
-http://www.atariage.com/forums/user/21021-xuel/
+  http://www.atariage.com/forums/user/21021-xuel/
+http://www.atariage.com/forums/topic/156160-quantizator/page__st__125#entry2509434
