@@ -34,15 +34,14 @@ $(movie).xex: $(rps)
 clean:
 	rm -f *.out.*
 
-release:
-	rm -rf release
-	mkdir -p release
-	cp *.exe release
-	cp *.dll release
-	cp Makefile release
-	cp movie.asq release
-	cp no_name.{asq,h} release
-	cp frame.asq release
+distdir = RastaMovie-0.1
+dist:
+	rm -rf $(distdir)
+	mkdir -p $(distdir)
+	cp Makefile $(distdir)
+	cp movie.asq $(distdir)
+	cp frame.asq $(distdir)
+	cp README $(distdir)
+	cp Rasta-opthack5.patch $(distdir)
 
 .PRECIOUS: %.xex %.out.rp.asq
-.PHONY: release

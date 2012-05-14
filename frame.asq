@@ -1,7 +1,7 @@
 .local
         ini bank
         org rp
-        icl "FRAME.rp.asq"
+        icl "FRAME.out.rp.asq"
         rts
         org scr
         ins "FRAME.out.png.mic",0,players-scr

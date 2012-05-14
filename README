@@ -1,6 +1,10 @@
 Download
 --------
 
+RastaConverterBeta3.zip
+
+http://www.atariage.com/forums/topic/156160-quantizator/page__st__125#entry2509434
+
 Rasta-opthack5.zip
 
 http://www.atariage.com/forums/topic/156160-quantizator/page__st__275#entry2518629
@@ -43,6 +47,10 @@ Unzip
   unzip RastaMovie-0.1.zip
 
   cd RastaMovie-0.1
+
+  unzip RastaConverterBeta3.zip
+  mv RastaConverterBeta3/Palettes .
+  mv RastaConverterBeta3/Generator/no_name.* .
 
   unzip Rasta-opthack5.zip
 
@@ -117,4 +125,3 @@ Contact
 -------
 
   http://www.atariage.com/forums/user/21021-xuel/
-http://www.atariage.com/forums/topic/156160-quantizator/page__st__125#entry2509434
