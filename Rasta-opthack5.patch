@@ -1,0 +1,36 @@
+diff -u ../../Rasta-opthack5/src/config.cpp ./config.cpp
+--- ../../Rasta-opthack5/src/config.cpp	2012-05-06 18:15:32.000000000 -0500
++++ ./config.cpp	2012-05-12 22:49:42.833349200 -0500
+@@ -135,4 +135,7 @@
+ 
+ 	string height_value = parser.getValue("h","240");
+ 	height=String2Value<int>(height_value);
++
++	string max_evals_value = parser.getValue("max_evals","999999999");
++	max_evals=String2Value<unsigned>(max_evals_value);
+ }
+diff -u ../../Rasta-opthack5/src/config.h ./config.h
+--- ../../Rasta-opthack5/src/config.h	2012-04-27 01:08:40.000000000 -0500
++++ ./config.h	2012-05-12 22:47:28.062957900 -0500
+@@ -43,6 +43,7 @@
+ 	int height;
+ 	FREE_IMAGE_FILTER rescale_filter;
+ 	e_init_type init_type;
++	unsigned max_evals;
+ 
+ 	CommandLineParser parser; 
+ 
+diff -u ../../Rasta-opthack5/src/rasta.cpp ./rasta.cpp
+--- ../../Rasta-opthack5/src/rasta.cpp	2012-05-08 00:03:32.000000000 -0500
++++ ./rasta.cpp	2012-05-12 22:47:25.520153500 -0500
+@@ -1962,8 +1962,8 @@
+ 	unsigned last_eval = 0;
+ 	bool clean_first_evaluation = cfg.continue_processing;
+ 	clock_t last_rate_check_time = clock();
+-
+-	while(!key[KEY_ESC] && !user_closed_app)
++	
++	while(!key[KEY_ESC] && !user_closed_app && evaluations < cfg.max_evals)
+ 	{
+ 		for (m=m_solutions.begin(),_m=m_solutions.end();m!=_m;++m)
+ 		{
