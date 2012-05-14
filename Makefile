@@ -14,8 +14,8 @@ xexs = $(patsubst %.png,%.xex,$(pngs))
 frames = $(patsubst %.png,%.out.frame.asq,$(pngs))
 max_evals = 100000
 
-%.xex: %.png
 	#./RastaConverter.exe $< /o=$*.out.png /noborder /dither=chess /max_evals=$(max_evals)
+%.xex: %.png
 	./RastaConverter.exe $< /o=$*.out.png /dither=chess /max_evals=$(max_evals)
 	perl -pe 's/output.png/$*.out.png/g' no_name.asq > $*.out.png.asq
 	./mads $*.out.png.asq -o:$@
@@ -38,7 +38,7 @@ $(movie).xex: movie.asq $(frames)
 clean:
 	rm -f *.out.* *.xex
 
-distdir = RastaMovie-0.1
+distdir = RastaMovie-0.2
 dist:
 	rm -rf $(distdir)
 	mkdir -p $(distdir)
@@ -47,7 +47,7 @@ dist:
 	cp frame.asq $(distdir)
 	cp README.txt $(distdir)
 	cp Rasta-opthack5.patch $(distdir)
-	rm $(distdir).zip
+	rm -f $(distdir).zip
 	zip $(distdir).zip $(distdir)/*
 
 .PRECIOUS: %.xex %.out.frame.asq
