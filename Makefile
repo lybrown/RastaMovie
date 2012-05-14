@@ -46,6 +46,7 @@ dist:
 	cp frame.asq $(distdir)
 	cp README.txt $(distdir)
 	cp Rasta-opthack5.patch $(distdir)
+	rm $(distdir).zip
 	zip $(distdir).zip $(distdir)/*
 
 .PRECIOUS: %.xex %.out.frame.asq
