@@ -44,7 +44,8 @@ dist:
 	cp Makefile $(distdir)
 	cp movie.asq $(distdir)
 	cp frame.asq $(distdir)
-	cp README $(distdir)
+	cp README.txt $(distdir)
 	cp Rasta-opthack5.patch $(distdir)
+	zip $(distdir).zip $(distdir)/*
 
 .PRECIOUS: %.xex %.out.frame.asq
