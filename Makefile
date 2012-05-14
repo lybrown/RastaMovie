@@ -1,10 +1,15 @@
-batch:
-	make -j3 all
+movie = homer
+j = 3
 
-all: movie.xex
-	altirra movie.xex
+all: $(movie).xex
 
-pngs = $(shell echo simpsons????.png)
+par:
+	make -j$(j) all
+
+show: all
+	altirra $(movie).xex
+
+pngs = $(shell echo $(movie)????.png)
 xexs = $(patsubst %.png,%.xex,$(pngs))
 rps = $(patsubst %.png,%.out.rp.asq,$(pngs))
 max_evals = 100000
@@ -22,8 +27,9 @@ max_evals = 100000
 %.show: %.xex
 	altirra $<
 
-movie.xex: $(rps)
-	./mads.exe movie.asq -o:$@
+$(movie).xex: $(rps)
+	perl -pe 's/MOVIE/$(movie)/g' movie.asq > $(movie).out.asq
+	./mads.exe $(movie).out.asq -o:$@
 
 clean:
 	rm -f *.out.*
@@ -39,3 +45,4 @@ release:
 	cp frame.asq release
 
 .PRECIOUS: %.xex %.out.rp.asq
+.PHONY: release
