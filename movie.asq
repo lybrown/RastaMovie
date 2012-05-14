@@ -1,4 +1,4 @@
-; rasta movie 
+; rasta movie
         icl "no_name.h"
 
         org $3000
@@ -54,14 +54,14 @@ LOOP    lda vcount              ;synchronization for the first screen line
 
 c0      lda #$00
         sta colbak
-        sta color0
-        sta color1
-        sta color2
-        sta color3
         sta COLPM0
         sta COLPM1
         sta COLPM2
         sta COLPM3
+        sta color0
+        sta color1
+        sta color2
+        sta color3
 s0      lda #$03
         sta sizep0
         sta sizep1
@@ -86,7 +86,7 @@ next
         lda next+1
         cmp #frame_count
         bne input
-        mva <banks next+1 
+        mva <banks next+1
 
 input
 ; exit
