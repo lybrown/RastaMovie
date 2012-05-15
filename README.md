@@ -8,41 +8,41 @@ Download
 
 RastaConverterBeta3.zip
 
-http://www.atariage.com/forums/topic/156160-quantizator/page__st__125#entry2509434
+* http://www.atariage.com/forums/topic/156160-quantizator/page__st__125#entry2509434
 
 Rasta-opthack5.zip
 
-http://www.atariage.com/forums/topic/156160-quantizator/page__st__275#entry2518629
+* http://www.atariage.com/forums/topic/156160-quantizator/page__st__275#entry2518629
 
 FreeImage
 
-http://freeimage.sourceforge.net/download.html
-http://downloads.sourceforge.net/freeimage/FreeImage3153Win32.zip
+* http://freeimage.sourceforge.net/download.html
+* http://downloads.sourceforge.net/freeimage/FreeImage3153Win32.zip
 
 Allegro
 
-http://www.allegro.cc/files/?v=4.2
-http://static.allegro.cc/file/library/allegro-4.2.3/allegro-msvc10-4.2.3.zip
+* http://www.allegro.cc/files/?v=4.2
+* http://static.allegro.cc/file/library/allegro-4.2.3/allegro-msvc10-4.2.3.zip
 
 Microsoft Visual C++ 2010 Express
 
-http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express
+* http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-cpp-express
 
 VirtualDub
 
-http://www.virtualdub.org
+* http://www.virtualdub.org
 
 Cygwin (Get patch, make, perl, zip, unzip, rxvt, 7z)
 
-http://www.cygwin.com
+* http://www.cygwin.com
 
 Altirra
 
-http://www.virtualdub.org/altirra.html
+* http://www.virtualdub.org/altirra.html
 
 Mads
 
-http://mads.atari8.info
+* http://mads.atari8.info
 
 Unzip
 -----
