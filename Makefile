@@ -22,7 +22,9 @@ max_evals = 100000
 
 %.out.frame.asq: frame.asq %.xex
 	perl -ne 'print if /Init/ .. /ldy/; print if /line0/ .. /line160/' \
-	$*.out.png.rp.ini $*.out.png.rp > $*.out.rp.asq
+	$*.out.png.rp.ini $*.out.png.rp \
+	| perl -e '@l=<>;splice@l,25,0,splice(@l,7,2),splice@l,23,1;print@l' \
+	> $*.out.rp.asq
 	perl -pe 's/FRAME/$*/' frame.asq > $@
 
 %.show: %.xex
