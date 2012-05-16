@@ -4,7 +4,9 @@
         icl "FRAME.out.rp.asq"
         rts
         org scr
-        ins "FRAME.out.png.mic",0,missiles-scr
+        ;.ds 40
+        offset = *
+        ins "FRAME.out.png.mic",0,missiles-offset
         org missiles
         icl "FRAME.out.png.pmg"
 .endl

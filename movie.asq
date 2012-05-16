@@ -1,16 +1,7 @@
 ; rasta movie
         icl "no_name.h"
 
-        org $3000
-banks
-        :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
-bank
-        lda banks
-        sta portb
-        inc bank+1
-        rts
-
-frame_repeat = 2
+frame_repeat = 1
 frame_count = 64
 
 rp = $4000
@@ -18,7 +9,32 @@ scr = $6010
 missiles = $7b00
 players = $7c00
 
-	org $4000
+        org $3000
+banks
+        :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
+bank
+        lda banks
+        sta portb
+        inc bank+1
+;.local
+;ld
+;        lda players+1
+;st
+;        sta players
+;        inc ld+1
+;        inc st+1
+;        bne ld
+;        inc ld+2
+;        inc st+2
+;        lda ld+2
+;        cmp >[players+$400]
+;        bne ld
+;        mva >players ld+2
+;        sta st+2
+;.endl
+        rts
+
+        org $4000
 FRAMES
 
         org $2000
@@ -38,7 +54,8 @@ LOOP    lda vcount              ;synchronization for the first screen line
         cmp #$02
         bne LOOP
 
-        mva #%00111110 dmactl   ;set new screen width
+        mva #%00111010 dmactl
+
         mva <ant dlptr
         mva >ant dlptr+1
 
@@ -67,10 +84,14 @@ s0      lda #$03
         sta sizep1
         sta sizep2
         sta sizep3
-        sta sizem
-        lda #$D0
-        sta hposm0
-        lda #$04
+        mva #$ff sizem
+        sta grafm
+        mva #$20 hposm0
+        mva #$28 hposm1
+        mva #$d0 hposm2
+        mva #$d8 hposm3
+        mva #$02 pmcntl
+        lda #$14
         sta gtictl
 
 repeat

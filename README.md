@@ -49,9 +49,9 @@ Unzip
 
     Launch cygwin rxvt
 
-    unzip RastaMovie-0.1.zip
+    unzip RastaMovie-0.3.zip
 
-    cd RastaMovie-0.1
+    cd RastaMovie-0.3
 
     unzip RastaConverterBeta3.zip
     mv RastaConverterBeta3/Palettes .
@@ -99,7 +99,7 @@ Extract Movie Frames
 
     Open video in VirtualDub.  Select range of frames.
 
-    File->Export->Image Sequence->PNG  Save into RastaMovie-0.1 directory.
+    File->Export->Image Sequence->PNG  Save into RastaMovie-0.3 directory.
 
 Make Movie
 ----------
