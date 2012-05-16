@@ -41,7 +41,7 @@ $(movie).xex: movie.asq $(frames)
 clean:
 	rm -f *.out.* *.xex
 
-distdir = RastaMovie-0.2
+distdir = RastaMovie-0.3
 dist:
 	rm -rf $(distdir)
 	mkdir -p $(distdir)
