@@ -1,0 +1,57 @@
+    ; print via CIO
+    ; http://www.atariarchives.org/roots/chapter_12.php
+
+;BUFLEN equ 255 ;(EXPANDED BEYOND PREVIOUS LIMITS)
+EOL equ $9B ;ATASCII CODE FOR END OF LINE CHARACTER
+OPEN equ $03 ;TOKEN FOR OPENING A DEVICE OR FILE
+OWRIT equ $0B ;TOKEN FOR "OPEN FOR WRITE OPERATIONS"
+PUTCHR equ $0B ;TOKEN FOR "PUT CHARACTER"
+CLOSE equ $0C ;TOKEN FOR CLOSING A DEVICE
+IOCB2 equ $20 ;OFFSET FOR IOCB NO.2
+ICCOM equ $342 ;COMMAND BYTE (CONTROLS CIO OPERATIONS)
+ICBAL equ $344 ;BUFFER ADDRESS (LOW BYTE)
+ICBAH equ $345 ;BUFFER ADDRESS (HIGH BYTE)
+ICBLL equ $348 ;BUFFER LENGTH (LOW BYTE)
+ICBLH equ $349 ;BUFFER LENGTH (HIGH BYTE)
+ICAX1 equ $34A ;AUXILIARY BYTE NO.1
+ICAX2 equ $34B ;AUXILIARY BYTE NO.2
+CIOV equ $E456 ;CIO VECTOR
+
+DEVNAM dta c'E:',EOL
+PRINT
+OSCR ;OPEN SCREEN ROUTINE
+    ldx #IOCB2
+    lda #OPEN
+    sta ICCOM,X
+    lda #<DEVNAM
+    sta ICBAL,X
+    lda #>DEVNAM
+    sta ICBAH,X
+    lda #OWRIT
+    sta ICAX1,X
+    lda #0
+    sta ICAX2,X
+    jsr CIOV
+    lda #PUTCHR
+    sta ICCOM,X
+    lda #<TXTBUF
+    sta ICBAL,X
+    lda #>TXTBUF
+    sta ICBAH,X
+PRNT
+    ldx #IOCB2
+    lda #<BUFLEN
+    sta ICBLL,X
+    lda #>BUFLEN
+    sta ICBLH,X
+    jsr CIOV
+CLOSED
+    ldx #IOCB2
+    lda #CLOSE
+    sta ICCOM,X
+    jsr CIOV
+    rts
+TXTBUF
+    dta c'Requires NTSC',EOL
+TXTEND
+BUFLEN equ [TXTEND-TXTBUF]
