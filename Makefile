@@ -1,5 +1,5 @@
 movie := birds
-fake := 1
+abx := 1
 j := 3
 
 all: $(movie).xex
@@ -7,7 +7,7 @@ all: $(movie).xex
 par:
 	make -j$(j) all
 
-show: all
+test show: all
 	atari $(movie).xex
 
 sofar:
@@ -33,10 +33,10 @@ sample_rate := 15720
 	perl -pe 's/output.png/$*.out.png/g' no_name.asq > $*.out.png.asq
 	./mads $*.out.png.asq -o:$@
 
-frametmpl := $(if $(fake),fakeframe.asm,frame.asq)
-movietmpl := $(if $(fake),fakemovie.asm,movie.asq)
+frametmpl := $(if $(fake),fakeframe.asm,$(if $(abx),abxframe.asm,frame.asq))
+movietmpl := $(if $(fake),fakemovie.asm,$(if $(abx),abxmovie.asm,movie.asq))
 
-%.out.frame.asq: $(frametmpl) %.out.png.rp
+%.out.frame.asq: $(frametmpl) %.out.png.rp $(movie).audc
 	perl -ne 'print if /Init/ .. /ldy/; print if /line0/ .. /line$(max_line)/' \
 	$*.out.png.rp.ini $*.out.png.rp \
 	| perl -e '@l=<>;splice@l,25,0,splice(@l,7,2),splice@l,23,1;print@l' \
@@ -45,18 +45,21 @@ movietmpl := $(if $(fake),fakemovie.asm,movie.asq)
 	$$s++ if s/lda (\S+) ; sample/lda $$s ; sample/; $$s++ if $$s == 0x30; s/cmp byt2/nop/;' \
 	> $*.out.rp.asq
 	perl -nle 's/\.he// or next;@x=split;print" dta \$$",join",\$$",@x' $*.out.png.pmg > $*.out.pmg.asm
-	perl -pe 'BEGIN{"$*" =~ /(\d+)/; $$f = $$1;}\
-	s/AUDIO_FRAME_OFFSET/$(samples_per_frame)*2*$$f/e; s/FRAME/$*/; s/MOVIE/$(movie)/;' $(frametmpl) > $@
+	./genaudio.pl --offset `perl -e '"$*" =~ /(\d+)/;print((2*$$1+1)*$(samples_per_frame))'` \
+	$(movie).audc > $*.out.aud.asm
+	perl -pe 's/FRAME/$*/' $(frametmpl) > $@
 
 %.show: %.xex
 	altirra $<
 
-$(movie).xex: $(movietmpl) $(frames) $(movie).audc
+$(movie).xex: $(movietmpl) $(frames)
+	./genaudio.pl --offset 0 $(movie).audc \
+	| perl -ne 'print if (/audio1/../audio2/)&&!/org/' > $(movie).out.aud.asm
 	perl -pe 'BEGIN{@x=qw($(frames));$$count=@x;}' \
 	-e 's/FRAMES/join "", map " icl \"$$_\"\n", @x/e;' \
-	-e 's/frame_count = .*/frame_count = $$count/;' \
+	-e 's/FRAMECOUNT/$$count/; s/MOVIE/$(movie)/;' \
 	$(movietmpl) > $(movie).out.asq
-	xasm.exe $(movie).out.asq /o:$@
+	xasm.exe /l $(movie).out.asq /o:$@
 
 %.audc: %.wav
 	sox -v 0.3 $< -u -b 8 -c 1 -r $(sample_rate) -D -t raw $*.raw

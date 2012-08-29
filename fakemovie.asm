@@ -64,7 +64,7 @@ showframe
 	mva audio+1 AUDC1
 	sta WSYNC
 	mva audio+2 AUDC1
-        :2 pha:pla
+        :2 pla:pha
         :1 nop
         :1 cmp byt2
 
