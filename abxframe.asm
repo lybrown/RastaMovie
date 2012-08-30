@@ -1,7 +1,7 @@
+	ift emulator
         org scr
-        ins "FRAME.out.png.mic",0,102*40
         :16 dta 0
-        ins "FRAME.out.png.mic",102*40,102*40
+        ins "FRAME.out.png.mic",0,204*40
         :16 dta 0
         ins "FRAME.out.png.mic",204*40,36*40
 
@@ -15,6 +15,23 @@
         org players
         icl "FRAME.out.pmg.asm"
 
-	ift emulator
 	ini showtwice
+
+        els
+        org scr
+        :12 dta 0
+        ins "FRAME.out.png.mic",0,204*40
+        :16 dta 0
+        ins "FRAME.out.png.mic",204*40,36*40
+
+        :[rp-*] dta 0
+        icl "FRAME.out.rp.asq"
+        rts
+
+        :[loadaudio1-*] dta 0
+        icl "FRAME.out.aud.asm"
+
+        :[players-*] dta 0
+        icl "FRAME.out.pmg.asm"
+
 	eif

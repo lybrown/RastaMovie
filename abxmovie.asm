@@ -1,5 +1,4 @@
 ; RastaMovie
-emulator equ 1
 audio equ $0
 resident equ $2000
 pagestart equ $4000
@@ -12,11 +11,7 @@ missiles equ pm+$300
 players equ pm+$400
 byt2 equ 0
 samples_per_frame equ 262
-        ift emulator
         opt f-h+
-        els
-        opt f+h-
-        eif
         icl "hardware.asm"
         org $4000
 relocate
@@ -88,27 +83,34 @@ showframe
         mva audio+0 AUDC1 ; line 1
         sta WSYNC
         mva audio+1 AUDC1
+        ldx #2
         sta WSYNC
         mva audio+2 AUDC1
-        lda #2
-        cmp:rne VCOUNT
+        cpx:rne VCOUNT
+        mva audio+3 AUDC1
         mva <dlist DLISTL
         mva >dlist DLISTH
         sta WSYNC
-        mva audio+3 AUDC1
-        sta WSYNC
         mva audio+4 AUDC1
         sta WSYNC
-        mva audio+5 AUDC1 ; line 6
+        mva audio+5 AUDC1
+        sta WSYNC
+        mva audio+6 AUDC1 ; line 6
         :2 pla:pha        ; sync raster program
         :1 nop
         :1 cmp byt2       ; abx blit must be complete by this point
         jsr rp            ; line 7
         mva #0 COLBAK     ; line 247
         rts
+freeze
+        lda #$18
+        ldx #0
+        sta:rne 0,x+
+done
+        jsr showframe
+        jmp done
 dlist
-        :102 dta $4e,a(scr+$0000+#*40)
-        :102 dta $4e,a(scr+$1000+#*40)
+        :204 dta $4e,a(scr+$10+#*40)
         :36 dta $4e,a(scr+$2000+#*40)
         dta $41,a(dlist)
         icl 'print.asm'
@@ -119,9 +121,7 @@ residentend equ *
         ift emulator
         ini relocate
         FRAMES
-        org $2000
-done
-        jsr showtwice
-        jmp done
-        ini done
+        ini freeze
+        els
+        FRAMES
         eif

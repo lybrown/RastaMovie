@@ -13,11 +13,12 @@ test show: all
 sofar:
 	make pngs="$(shell printf '%s\n' $(movie)????.out.png | sed s/\.out//)"
 
+emulator := 1
 max_frame := 6029
 max_line := 240
 pngs := $(wordlist 1,$(max_frame),$(shell echo $(movie)????.png))
 xexs := $(patsubst %.png,%.xex,$(pngs))
-frames := $(patsubst %.png,%.out.frame.asq,$(pngs))
+frames := $(patsubst %.png,%.f.asm,$(pngs))
 max_evals := 300000
 dither := /dither=chess
 #samples_per_frame := 312
@@ -36,16 +37,17 @@ sample_rate := 15720
 frametmpl := $(if $(fake),fakeframe.asm,$(if $(abx),abxframe.asm,frame.asq))
 movietmpl := $(if $(fake),fakemovie.asm,$(if $(abx),abxmovie.asm,movie.asq))
 
-%.out.frame.asq: $(frametmpl) %.out.png.rp $(movie).audc
+%.f.asm: $(frametmpl) %.out.png.rp $(movie).audc
 	perl -ne 'print if /Init/ .. /ldy/; print if /line0/ .. /line$(max_line)/' \
 	$*.out.png.rp.ini $*.out.png.rp \
 	| perl -e '@l=<>;splice@l,25,0,splice(@l,7,2),splice@l,23,1;print@l' \
 	| perl -pe '0 if 1 .. s/COLBAK/HITCLR/;s/; on/ ; on/;s/^(\w)/;$$1/' \
-	| perl -pe 'BEGIN{$$s=4}s/lda.*/lda 3/ if $$.==26;s/HITCLR/AUDC1/ if $$.==27; \
+	| perl -pe 'BEGIN{$$s=8}s/lda.*/lda 7/ if $$.==26;s/HITCLR/AUDC1/ if $$.==27; \
 	$$s++ if s/lda (\S+) ; sample/lda $$s ; sample/; $$s++ if $$s == 0x30; s/cmp byt2/nop/;' \
 	> $*.out.rp.asq
 	perl -nle 's/\.he// or next;@x=split;print" dta \$$",join",\$$",@x' $*.out.png.pmg > $*.out.pmg.asm
-	./genaudio.pl --offset `perl -e '"$*" =~ /(\d+)/;print((2*$$1+1)*$(samples_per_frame))'` \
+	./genaudio.pl $(if $(emulator),--org) \
+	--offset `perl -e '"$*" =~ /(\d+)/;print((2*$$1+1)*$(samples_per_frame))'` \
 	$(movie).audc > $*.out.aud.asm
 	perl -pe 's/FRAME/$*/' $(frametmpl) > $@
 
@@ -53,13 +55,13 @@ movietmpl := $(if $(fake),fakemovie.asm,$(if $(abx),abxmovie.asm,movie.asq))
 	altirra $<
 
 $(movie).xex: $(movietmpl) $(frames)
-	./genaudio.pl --offset 0 $(movie).audc \
+	./genaudio.pl --org --offset 0 $(movie).audc \
 	| perl -ne 'print if (/audio1/../audio2/)&&!/org/' > $(movie).out.aud.asm
 	perl -pe 'BEGIN{@x=qw($(frames));$$count=@x;}' \
 	-e 's/FRAMES/join "", map " icl \"$$_\"\n", @x/e;' \
 	-e 's/FRAMECOUNT/$$count/; s/MOVIE/$(movie)/;' \
 	$(movietmpl) > $(movie).out.asq
-	xasm.exe /l $(movie).out.asq /o:$@
+	time xasm /d:emulator=$(if $(emulator),1,0) $(movie).out.asq /o:$@
 
 %.audc: %.wav
 	sox -v 0.3 $< -u -b 8 -c 1 -r $(sample_rate) -D -t raw $*.raw
@@ -82,4 +84,4 @@ dist:
 	rm -f $(distdir).zip
 	zip $(distdir).zip $(distdir)/*
 
-.PRECIOUS: %.xex %.out.png.rp %.out.frame.asq
+.PRECIOUS: %.xex %.out.png.rp %.f.asm
