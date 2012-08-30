@@ -37,13 +37,14 @@ sample_rate := 15720
 frametmpl := $(if $(fake),fakeframe.asm,$(if $(abx),abxframe.asm,frame.asq))
 movietmpl := $(if $(fake),fakemovie.asm,$(if $(abx),abxmovie.asm,movie.asq))
 
+# -1 below disables skipping over zero-page byte Altirra (used to?) write
 %.f.asm: $(frametmpl) %.out.png.rp $(movie).audc
 	perl -ne 'print if /Init/ .. /ldy/; print if /line0/ .. /line$(max_line)/' \
 	$*.out.png.rp.ini $*.out.png.rp \
 	| perl -e '@l=<>;splice@l,25,0,splice(@l,7,2),splice@l,23,1;print@l' \
 	| perl -pe '0 if 1 .. s/COLBAK/HITCLR/;s/; on/ ; on/;s/^(\w)/;$$1/' \
 	| perl -pe 'BEGIN{$$s=8}s/lda.*/lda 7/ if $$.==26;s/HITCLR/AUDC1/ if $$.==27; \
-	$$s++ if s/lda (\S+) ; sample/lda $$s ; sample/; $$s++ if $$s == 0x30; s/cmp byt2/nop/;' \
+	$$s++ if s/lda (\S+) ; sample/lda $$s ; sample/; $$s++ if $$s == 0x30*-1; s/cmp byt2/nop/;' \
 	> $*.out.rp.asq
 	perl -nle 's/\.he// or next;@x=split;print" dta \$$",join",\$$",@x' $*.out.png.pmg > $*.out.pmg.asm
 	./genaudio.pl $(if $(emulator),--org) \

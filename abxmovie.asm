@@ -72,47 +72,49 @@ nextframe
         sne:inc setframe+3
 showtwice
         jsr showframe
-        jsr loadaudio1
+        jsr loadaudio1    ; lines 248 through 261
+        mva audio+0 AUDC1 ; line 0
         jsr showframe
         jsr loadaudio2
+        mva audio+0 AUDC1
         ift emulator
         rts
         eif
         jmp setframe
 showframe
-        mva audio+0 AUDC1 ; line 1
         sta WSYNC
-        mva audio+1 AUDC1
+        mva audio+1 AUDC1 ; line 1
         ldx #2
         sta WSYNC
-        mva audio+2 AUDC1
+        mva audio+2 AUDC1 ; line 2
         cpx:rne VCOUNT
-        mva audio+3 AUDC1
-        mva <dlist DLISTL
+        mva audio+3 AUDC1 ; line 3
+        mva <dlist DLISTL ; dlist via CPU since ANTIC's jvb was cut-off
         mva >dlist DLISTH
         sta WSYNC
-        mva audio+4 AUDC1
+        mva audio+4 AUDC1 ; line 4
         sta WSYNC
-        mva audio+5 AUDC1
+        mva audio+5 AUDC1 ; line 5
         sta WSYNC
         mva audio+6 AUDC1 ; line 6
         :2 pla:pha        ; sync raster program
         :1 nop
-        :1 cmp byt2       ; abx blit must be complete by this point
-        jsr rp            ; line 7
-        mva #0 COLBAK     ; line 247
+        :1 cmp byt2       ; abx blit must be complete by now for jsr
+        jsr rp            ; lines 7 through 247
+        mva #0 COLBAK
         rts
-freeze
-        lda #$18
-        ldx #0
-        sta:rne 0,x+
-done
-        jsr showframe
-        jmp done
 dlist
         :204 dta $4e,a(scr+$10+#*40)
         :36 dta $4e,a(scr+$2000+#*40)
         dta $41,a(dlist)
+freeze
+        jsr showframe
+        lda #$18
+        sta AUDC1
+        :248 sta [#]      ; load silence into audio buffer used by showframe
+done
+        jsr showframe
+        jmp done
         icl 'print.asm'
 loadaudio0
         icl 'MOVIE.out.aud.asm'

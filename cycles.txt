@@ -28,31 +28,29 @@ VCOUNT LINE
 ABX
 ---
 
-NOTE: This is out-of-date.
-
 VCOUNT LINE
-2      4    DMACTL,DLIST,WSYNC,AUDIO+0
-2.5    5    WSYNC,AUDIO+1
-3      6    WSYNC,AUDIO+2
-3.5    7    sync,rp(ini),AUDIO+3 <- blit has to be done before jsr to bank_code
-4      8    rp,AUDIO+4   <- start of rp & bitmap
-4.5    9    rp,AUDIO+5
+2      4    DMACTL,DLIST,WSYNC,AUDIO+4
+2.5    5    WSYNC,AUDIO+5
+3      6    WSYNC,AUDIO+6
+3.5    7    sync,rp(ini),AUDIO+7 <- blit has to be done before jsr to bank_code
+4      8    rp,AUDIO+8   <- start of rp & bitmap
+4.5    9    rp,AUDIO+9
 ...
-123    246  rp,AUDIO+242
-123.5  247  rp,AUDIO+243 <- end of rp & bitmap
-124    248  COLBAK=0,WSYNC,AUDIO+244
-124.5  249  write_zpage_audio,AUDIO+245
-125    250  write_zpage_audio,AUDIO+246
+123    246  rp,AUDIO+246
+123.5  247  rp,AUDIO+247 <- end of rp & bitmap
+124    248  COLBAK=0,WSYNC,AUDIO+248
+124.5  249  write_zpage_audio,AUDIO+249
+125    250  write_zpage_audio,AUDIO+250
 ...
-130    257  write_zpage_audio,AUDIO+253
-130    258  write_zpage_audio,AUDIO+254
-130    259  write_zpage_audio,AUDIO+255
-130    260  write_zpage_audio,AUDIO+256
-130.5  261  write_zpage_audio,AUDIO+257
-0      0    write_zpage_audio,AUDIO+258
-0.5    1    return_from_bank_code,request abx blit,WSYNC,AUDIO+259
-1      2    WSYNC,AUDIO+260
-1.5    3    WSYNC,AUDIO+261
+130    257  write_zpage_audio,AUDIO+257
+130    258  write_zpage_audio,AUDIO+258
+130    259  write_zpage_audio,AUDIO+259
+130    260  write_zpage_audio,AUDIO+260
+130.5  261  write_zpage_audio,AUDIO+261
+0      0    write_zpage_audio,return_from_bank_code,AUDIO+0
+0.5    1    request abx blit,WSYNC,AUDIO+1
+1      2    WSYNC,AUDIO+2
+1.5    3    WSYNC,AUDIO+3
 
   114 cycles
  -9 for refresh
@@ -60,10 +58,18 @@ VCOUNT LINE
  =98 remaining for filling zpage audio buffer
  /5 cycles per sample
  =19 samples per line + 3 cycles left over
- 262/19 = 14 lines for 6502 audio buffer blit (262 bytes)
- 262-240-14 = ~8 lines for ABX frame blit (24K)
+  262/19 = 14 lines for 6502 audio buffer blit (262 bytes)
+  1 cycle on line 248 to sync between rp and loadaudio (could optimize)
+  262-240-14-1 = ~7 lines for ABX frame blit (24K)
 
+load
   lda imm  - 2 cycles
-  sta zp   - 3 cycles
-  lda zp   - 3 cycles
+  sta zp   - 3 cycles (for audio samples $0-$ff)
+  sta abs  - 4 cycles (for audio samples $100-$105)
+play
+  lda zp   - 3 cycles (for audio samples $0-$ff)
+  lda abs  - 4 cycles (for audio samples $100-$105)
   sta AUDC - 4 cycles
+pad
+  cmp zp   - 3 cycles (to pad lines 249 - 255)
+  nop      - 2 cycles (to pad lines 256 - 260)

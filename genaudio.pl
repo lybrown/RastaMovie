@@ -14,7 +14,7 @@ sub frame {
     my $playoffset = 248;
     for my $i (0 .. 12) {
         my $s = 0;
-	my $n = $playoffset > 255 ? 8 : 7;
+        my $n = $playoffset > 255 ? 8 : 7;
         my $d = $debug ? " ; s=$s n=$n" : "";
         print "\tmva audio+$playoffset AUDC1$d\n";
         $playoffset += 1;
@@ -26,15 +26,15 @@ sub frame {
             $loadoffset += 1;
             $s += 5;
         }
-	if ($playoffset > 255) {
+        if ($playoffset > 255) {
             my $d = $debug ? " ; s=$s n=2" : "";
-	    print "\tnop$d\n";
-	    $s += 2;
-	} else {
+            print "\tnop$d\n";
+            $s += 2;
+        } else {
             my $d = $debug ? " ; s=$s n=3" : "";
-	    print "\tcmp 0$d\n";
-	    $s += 3;
-	}
+            print "\tcmp 0$d\n";
+            $s += 3;
+        }
     }
     my $s = 0;
     my $d = $debug ? " ; s=$s n=8" : "";
