@@ -13,7 +13,7 @@ test show: all
 sofar:
 	make pngs="$(shell printf '%s\n' $(movie)????.out.png | sed s/\.out//)"
 
-emulator := 1
+emulator :=
 max_frame := 6029
 max_line := 240
 pngs := $(wordlist 1,$(max_frame),$(shell echo $(movie)????.png))

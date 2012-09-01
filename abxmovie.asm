@@ -14,7 +14,12 @@ samples_per_frame equ 262
         opt f-h+
         icl "hardware.asm"
         org $4000
+        ift !emulator
+        org r:$4006
+        eif
 relocate
+        sei               ; stop interrupts
+        mva #$00 NMIEN    ; stop all interrupts
         ldx #0
         ldy >residentend
 ld      lda $4000,x
@@ -34,12 +39,11 @@ checkntsc
         lda #1
         cmp PAL
         bne continue
+        jsr oscr
         jsr print
         jmp *
 continue
-        sei               ; stop interrupts
-        mva #$00 NMIEN    ; stop all interrupts
-        sta COLPF3        ; black missiles
+        mva #0 COLPF3     ; black missiles
         mva #$ff SIZEM    ; wide missiles
         sta GRAFM         ; solid missiles
         sta SIZEP0        ; wide players
@@ -61,12 +65,13 @@ continue
         eif
 setframe
         lda #1
-        sta $d700         ; request abx to blit next frame
+        sta $d701         ; request abx to blit next frame
         cmp #<FRAMECOUNT  ; can't access abx memory until blit is complete
         bne nextframe
         lda setframe+3
         cmp #>FRAMECOUNT
-        beq showtwice
+        bne nextframe
+        jmp freeze
 nextframe
         inc setframe+1
         sne:inc setframe+3
@@ -95,6 +100,14 @@ showframe
         mva audio+4 AUDC1 ; line 4
         sta WSYNC
         mva audio+5 AUDC1 ; line 5
+        ift !emulator
+check
+        lda $4000
+        bne check
+        lda $4002
+        cmp #$fb
+        bne check
+        eif
         sta WSYNC
         mva audio+6 AUDC1 ; line 6
         :2 pla:pha        ; sync raster program
@@ -125,5 +138,9 @@ residentend equ *
         FRAMES
         ini freeze
         els
+        org r:*+$2000
+        :[$a000-*] dta 0
+        ;ini relocate
         FRAMES
+        ;ini freeze
         eif

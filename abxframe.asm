@@ -19,6 +19,7 @@
 
         els
         org scr
+        org r:[scr+4]
         :12 dta 0
         ins "FRAME.out.png.mic",0,204*40
         :16 dta 0
@@ -33,5 +34,7 @@
 
         :[players-*] dta 0
         icl "FRAME.out.pmg.asm"
+
+        :[$a000-*] dta 0
 
 	eif

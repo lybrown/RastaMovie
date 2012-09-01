@@ -18,7 +18,6 @@ ICAX2 equ $34B ;AUXILIARY BYTE NO.2
 CIOV equ $E456 ;CIO VECTOR
 
 DEVNAM dta c'E:',EOL
-PRINT
 OSCR ;OPEN SCREEN ROUTINE
     ldx #IOCB2
     lda #OPEN
@@ -38,13 +37,15 @@ OSCR ;OPEN SCREEN ROUTINE
     sta ICBAL,X
     lda #>TXTBUF
     sta ICBAH,X
-PRNT
+    rts
+PRINT
     ldx #IOCB2
     lda #<BUFLEN
     sta ICBLL,X
     lda #>BUFLEN
     sta ICBLH,X
     jsr CIOV
+    rts
 CLOSED
     ldx #IOCB2
     lda #CLOSE
