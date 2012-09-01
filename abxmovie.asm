@@ -76,6 +76,7 @@ nextframe
         inc setframe+1
         sne:inc setframe+3
 showtwice
+        mva audio+0 AUDC1
         jsr showframe
         jsr loadaudio1    ; lines 248 through 261
         mva audio+0 AUDC1 ; line 0

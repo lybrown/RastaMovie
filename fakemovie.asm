@@ -55,6 +55,7 @@ s0      lda #$03
 	cmp:rne VCOUNT
 
 showframe
+        mva $600 AUDC1
         mva #%00111010 DMACTL
         mva <ant DLISTL
         mva >ant DLISTH
@@ -92,6 +93,7 @@ sync2
         lda a:audio+245,x
         sta WSYNC
         sta AUDC1
+        sta $600
         inx
         cpy VCOUNT
         bne sync2
