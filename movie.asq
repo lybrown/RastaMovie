@@ -1,0 +1,181 @@
+; rasta movie
+        icl "no_name.h"
+
+frame_repeat = 1
+frame_count = 64
+
+rp = $4000
+scr = $6010
+missiles = $7b00
+players = $7c00
+
+        org $3000
+banks
+        :64 dta [[#*4]&$e0] | [[#*2]&$f] | $01
+bank
+        lda banks
+        sta portb
+        inc bank+1
+;.local
+;ld
+;        lda players+1
+;st
+;        sta players
+;        inc ld+1
+;        inc st+1
+;        bne ld
+;        inc ld+2
+;        inc st+2
+;        lda ld+2
+;        cmp >[players+$400]
+;        bne ld
+;        mva >players ld+2
+;        sta st+2
+;.endl
+        rts
+
+        org $4000
+FRAMES
+
+        org $2000
+ant     ANTIC_PROGRAM scr,ant
+
+main
+        mva #$78 pmbase         ;missiles and players data address
+        mva #$03 pmcntl         ;enable players and missiles
+
+        lda:cmp:req $14         ;wait 1 frame
+
+        sei                     ;stop interrups
+        mva #$00 nmien          ;stop all interrupts
+        jmp c0
+
+LOOP    lda vcount              ;synchronization for the first screen line
+        cmp #$02
+        bne LOOP
+
+        mva #%00111010 dmactl
+
+        mva <ant dlptr
+        mva >ant dlptr+1
+
+; sync
+        :3 sta wsync
+        :3 pha:pla
+        :3 nop
+
+        jsr rp
+
+        ;lda #124
+        ;cmp:rne VCOUNT
+
+c0      lda #$00
+        sta colbak
+        sta COLPM0
+        sta COLPM1
+        sta COLPM2
+        sta COLPM3
+        sta color0
+        sta color1
+        sta color2
+        sta color3
+s0      lda #$03
+        sta sizep0
+        sta sizep1
+        sta sizep2
+        sta sizep3
+        mva #$ff sizem
+        sta grafm
+        mva #$20 hposm0
+        mva #$28 hposm1
+        mva #$d0 hposm2
+        mva #$d8 hposm3
+        mva #$02 pmcntl
+        lda #$14
+        sta gtictl
+
+repeat
+        lda #0
+        inc repeat+1
+        cmp #frame_repeat
+        bne input
+        mva #0 repeat+1
+next
+        lda banks
+        sta portb
+        inc next+1
+        lda next+1
+        cmp #frame_count
+        bne input
+        mva <banks next+1
+
+input
+; exit
+
+        lda trig0               ; FIRE #0
+        beq stop
+
+        lda trig1               ; FIRE #1
+        beq stop
+
+        lda consol              ; START
+        and #1
+        beq stop
+
+        lda skctl               ; ANY KEY
+        and #$04
+        beq stop
+
+        jmp LOOP
+
+stop    mva #$00 pmcntl         ;PMG disabled
+        tax
+        sta:rne hposp0,x+
+
+        mva #$ff portb          ;ROM switch on
+        mva #$40 nmien          ;only NMI interrupts, DLI disabled
+        cli                     ;IRQ enabled
+
+        rts                     ;return to ... DOS
+
+        org $00
+byt2    .ds 1
+
+; macro
+
+.MACRO  ANTIC_PROGRAM
+        :+8 dta $4e,a(:1+$0000+#*40)
+        :+8 dta $4e,a(:1+$0140+#*40)
+        :+8 dta $4e,a(:1+$0280+#*40)
+        :+8 dta $4e,a(:1+$03C0+#*40)
+        :+8 dta $4e,a(:1+$0500+#*40)
+        :+8 dta $4e,a(:1+$0640+#*40)
+        :+8 dta $4e,a(:1+$0780+#*40)
+        :+8 dta $4e,a(:1+$08C0+#*40)
+        :+8 dta $4e,a(:1+$0A00+#*40)
+        :+8 dta $4e,a(:1+$0B40+#*40)
+        :+8 dta $4e,a(:1+$0C80+#*40)
+        :+8 dta $4e,a(:1+$0DC0+#*40)
+        :+8 dta $4e,a(:1+$0F00+#*40)
+        :+8 dta $4e,a(:1+$1040+#*40)
+        :+8 dta $4e,a(:1+$1180+#*40)
+        :+8 dta $4e,a(:1+$12C0+#*40)
+        :+8 dta $4e,a(:1+$1400+#*40)
+        :+8 dta $4e,a(:1+$1540+#*40)
+        :+8 dta $4e,a(:1+$1680+#*40)
+        :+8 dta $4e,a(:1+$17C0+#*40)
+;        :+8 dta $4e,a(:1+$1900+#*40)
+;        :+8 dta $4e,a(:1+$1A40+#*40)
+;        :+8 dta $4e,a(:1+$1B80+#*40)
+;        :+8 dta $4e,a(:1+$1CC0+#*40)
+;        :+8 dta $4e,a(:1+$1E00+#*40)
+;        :+4 dta $4e,a(:1+$1F40+#*40)
+;        :+4 dta $4e,a(:1+$1FF0+#*40)
+;        :+8 dta $4e,a(:1+$2090+#*40)
+;        :+8 dta $4e,a(:1+$21D0+#*40)
+;        :+8 dta $4e,a(:1+$2310+#*40)
+;        :+8 dta $4e,a(:1+$2450+#*40)
+        dta $41,a(:2)
+.ENDM
+
+        run main
